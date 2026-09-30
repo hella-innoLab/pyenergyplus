@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  EnergyPlus_Commit: cf73682
+  EnergyPlus_Commit: 0a728a64d2f04afa096144255216f4d7e6cd53be
 
 jobs:
   build_ubuntu:
@@ -129,3 +129,24 @@ jobs:
       with:
         name: dist-windows
         path: ./dist
+
+  release:
+    needs: [build_ubuntu, build_test_osx, build_test_windows]
+    if: github.ref == 'refs/heads/cfsfix-25.2.0'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/download-artifact@v4
+      with:
+        pattern: dist-*
+        path: dist
+        merge-multiple: true
+    - name: Publish the wheels
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        ls -l dist
+        gh release create v25.2.0-cfsfix1 dist/*.whl --repo ${{ github.repository }} --target cfsfix-25.2.0 \
+          --title "pyenergyplus_lbnl 25.2.0+cfsfix1" \
+          --notes "EnergyPlus 25.2.0 (cf7368216c) with the sky and ground diffuse transmittance of complex fenestration read the same way round as the beam (WindowComplexManager.cc lines 1741 and 1783). Install: pip install --force-reinstall \"pyenergyplus_lbnl==25.2.0+cfsfix1\" --find-links https://github.com/${{ github.repository }}/releases/expanded_assets/v25.2.0-cfsfix1"
