@@ -50,7 +50,7 @@ jobs:
 
 
   build_test_osx:
-    runs-on: macos-latest
+    runs-on: macos-15
     strategy:
       fail-fast: false
       matrix:
