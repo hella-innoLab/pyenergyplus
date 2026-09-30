@@ -89,7 +89,7 @@ jobs:
 
 
   build_test_windows:
-    runs-on: windows-latest
+    runs-on: windows-2022
     env:
       CMAKE_Fortran_COMPILER: "/c/msys64/mingw64/bin/x86_64-w64-mingw32-gfortran.exe"
     strategy:
